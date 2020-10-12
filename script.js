@@ -22,23 +22,73 @@ var correctCount = 0;
 var time = 60;
 var intervalId;
 
+var highscore = {
+  name: "",
+  score: "",
+
+}
+
 function endQuiz() {
   clearInterval(intervalId);
   var body = document.body;
   body.innerHTML = "Game over, You scored " + correctCount;
   setTimeout(showHighScore(),2000)
+
   // wait 2 seconds and call showHighScore;
 }
-
+function sort(a)
+{
+  for(i = 0; i<a.length-1; i++)
+  {
+    if(a[i]>a[i+1])
+    {
+      var temp = a[i]
+      a[i] = a[i+1]
+      a[i+1] = temp
+    }
+  }
+  return a
+}
 function showHighScore() {
+
+  var myName = prompt("Please Enter Your Name")
+  highscore.name = myName
+  localStorage.setItem(myName, correctCount)
+  //setTimeout(function(){
+    var allScores = localStorage.getItem("User")
+    console.log(allScores)
+    var keys = Object.keys(localStorage)
+    var highscorelist = document.createElement("div")
+    var orderedHSL = document.createElement("ol")
+
+
+    var sorted = sort(keys)
+    for(i = 0;i<keys.length;i++)
+    {
+      var scoreListEl = document.createElement("li")
+      scoreListEl.textContent = sorted[i]
+      orderedHSL.append(scoreListEl)
+    }
+    highscorelist.append(orderedHSL)
+    console.log(keys)
+    console.log(highscorelist)
+    document.body.appendChild(highscorelist)
+  //},5000)
   // write code here
+
+}
+function clearHighScores(){
+  localStorage.removeItem("User")
+
 }
 
 function updateTime() {
-  time--;
-  timerEl.textContent = time;
   if (time <= 0) {
     endQuiz();
+  }
+  else{
+  time--;
+  timerEl.textContent = time;
   }
 }
 
@@ -81,7 +131,10 @@ function checkAnswer(event) {
       correctCount++;
     } else {
       questionResultEl.textContent = "Incorrect";
+      if(time>=2)
+      {
       time = time - 2;
+      }
       timerEl.textContent = time;
     }
   }
